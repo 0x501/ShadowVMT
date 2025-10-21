@@ -1,4 +1,4 @@
-# ShadowVMT
+# Shadow VMT
 
 A C++ class to perform shadow VMT hooking, allowing you to hook and unhook virtual methods safely by creating a copy of the target class's virtual method table (VMT).
 

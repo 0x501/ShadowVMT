@@ -30,7 +30,7 @@ public:
 			MethodCount++;
 
 		if (MethodCount == 0)
-			throw std::runtime_error("Original VMT size is zero");
+			throw std::runtime_error("Original VMT has no methods");
 
 		pShadowTable = std::make_unique<std::uintptr_t[]>(MethodCount);
 		std::memcpy(pShadowTable.get(), pOriginalTable, MethodCount * sizeof(std::uintptr_t));

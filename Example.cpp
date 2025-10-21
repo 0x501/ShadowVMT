@@ -26,7 +26,7 @@ void HookedPrintMessage()
 
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
-	// Call original method using: ShadowTable->CallOriginal</*return type*/>(/*index*/);
+	// Call original method using: ShadowTable->CallOriginal</*return type*/>(/*index*/, /*thisptr*/, /*args*/);
 }
 
 int main()

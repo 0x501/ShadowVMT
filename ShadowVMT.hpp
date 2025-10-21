@@ -1,19 +1,11 @@
 #pragma once
 
 //#define DEBUG
-
 #ifdef DEBUG
-
 #define LOG(msg) std::cout << "[ShadowVMT] " << msg << "\n";
-
-#endif // DEBUG
-
-#ifndef LOG
-
+#else
 #define LOG(msg)
-
-#endif // !LOG
-
+#endif // DEBUG
 
 class ShadowVMT
 {

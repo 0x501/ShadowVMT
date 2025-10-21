@@ -9,7 +9,9 @@ public:
 	virtual void PrintMessage() // Virtual method to be hooked
     {
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN);
+
         std::cout << "Original message" << std::endl;
+
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
     }
 };
@@ -24,7 +26,7 @@ void HookedPrintMessage()
 
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 
-	// Call original method using: ShadowTable->CallOriginal<void>(0);
+	// Call original method using: ShadowTable->CallOriginal</*return type*/>(/*index*/);
 }
 
 int main()

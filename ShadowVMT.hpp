@@ -22,30 +22,37 @@ private:
 	std::uintptr_t* pOriginalTable = nullptr;
 	std::uintptr_t** pVtablePtr = nullptr;
 public:
-	ShadowVMT(void* instance) {
+	size_t MethodCount = 0;
+
+	explicit ShadowVMT(void* instance) {
 		if (instance == nullptr)
 			throw std::invalid_argument("Instance pointer is null");
 
 		pOriginalTable = *(std::uintptr_t**)instance;
 
-		size_t sz = 0;
-		while (pOriginalTable[sz])
-			sz++;
+		while (pOriginalTable[MethodCount])
+			MethodCount++;
 
-		if (sz == 0)
+		if (MethodCount == 0)
 			throw std::runtime_error("Original VMT size is zero");
 
-		pShadowTable = std::make_unique<std::uintptr_t[]>(sz);
-		std::memcpy(pShadowTable.get(), pOriginalTable, sz * sizeof(std::uintptr_t));
-		LOG("Copied VMT (size: " << sz << ")");
+		pShadowTable = std::make_unique<std::uintptr_t[]>(MethodCount);
+		std::memcpy(pShadowTable.get(), pOriginalTable, MethodCount * sizeof(std::uintptr_t));
+		LOG("Copied VMT (size: " << MethodCount << ")")
 		pVtablePtr = (std::uintptr_t**)instance;
 		pOriginalTable = *pVtablePtr;
 		*pVtablePtr = pShadowTable.get();
-		LOG("Hooked VMT");
+		LOG("Hooked VMT")
 	}
+
 	~ShadowVMT() {
 		Restore();
 		LOG("Destructor called");
+	}
+
+	void HookVMT() {
+		*pVtablePtr = pShadowTable.get();
+		LOG("Hooked VMT")
 	}
 
 	bool HookMethod(int idx, uintptr_t pMethod) {
@@ -53,14 +60,14 @@ public:
 			return false;
 
 		pShadowTable[idx] = pMethod;
-		LOG("Hooked method at index: " << idx << " (" << pMethod << ")");
+		LOG("Hooked method at index: " << idx << " (" << pMethod << ")")
 
 		return true;
 	}
 
 	bool UnhookMethod(int idx) {
 		pShadowTable[idx] = pOriginalTable[idx];
-		LOG("Unhooked method at index: " << idx << " (" << pOriginalTable[idx] << ")");
+		LOG("Unhooked method at index: " << idx << " (" << pOriginalTable[idx] << ")")
 		return true;
 	}
 

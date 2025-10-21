@@ -17,10 +17,6 @@
 
 class ShadowVMT
 {
-private:
-	std::unique_ptr<std::uintptr_t[]> pShadowTable;
-	std::uintptr_t* pOriginalTable = nullptr;
-	std::uintptr_t** pVtablePtr = nullptr;
 public:
 	size_t MethodCount = 0;
 
@@ -85,4 +81,8 @@ public:
 		auto ogFunc = reinterpret_cast<FunctionPtr>(addr);
 		return ogFunc(args...);
 	}
+private:
+	std::unique_ptr<std::uintptr_t[]> pShadowTable;
+	std::uintptr_t* pOriginalTable = nullptr;
+	std::uintptr_t** pVtablePtr = nullptr;
 };

@@ -1,10 +1,10 @@
 #pragma once
 
-//#define DEBUG
-#ifdef DEBUG
-#define LOG(msg) std::cout << "[ShadowVMT] " << msg << "\n";
+//#define DEBUG_SHADOW_VMT
+#ifdef DEBUG_SHADOW_VMT
+#define SHADOWLOG(msg) std::cout << "[ShadowVMT] " << msg << "\n";
 #else
-#define LOG(msg)
+#define SHADOWLOG(msg)
 #endif // DEBUG
 
 class ShadowVMT
@@ -26,21 +26,21 @@ public:
 
 		pShadowTable = std::make_unique<std::uintptr_t[]>(MethodCount);
 		std::memcpy(pShadowTable.get(), pOriginalTable, MethodCount * sizeof(std::uintptr_t));
-		LOG("Copied VMT (size: " << MethodCount << ")")
+		SHADOWLOG("Copied VMT (size: " << MethodCount << ")")
 		pVtablePtr = (std::uintptr_t**)instance;
 		pOriginalTable = *pVtablePtr;
 		*pVtablePtr = pShadowTable.get();
-		LOG("Hooked VMT")
+		SHADOWLOG("Hooked VMT")
 	}
 
 	~ShadowVMT() {
 		Restore();
-		LOG("Destructor called");
+		SHADOWLOG("Destructor called");
 	}
 
 	void HookVMT() {
 		*pVtablePtr = pShadowTable.get();
-		LOG("Hooked VMT")
+		SHADOWLOG("Hooked VMT")
 	}
 
 	bool HookMethod(int idx, uintptr_t pMethod) {
@@ -48,26 +48,26 @@ public:
 			return false;
 
 		pShadowTable[idx] = pMethod;
-		LOG("Hooked method at index: " << idx << " (" << pMethod << ")")
+		SHADOWLOG("Hooked method at index: " << idx << " (" << pMethod << ")")
 
 		return true;
 	}
 
 	bool UnhookMethod(int idx) {
 		pShadowTable[idx] = pOriginalTable[idx];
-		LOG("Unhooked method at index: " << idx << " (" << pOriginalTable[idx] << ")")
+		SHADOWLOG("Unhooked method at index: " << idx << " (" << pOriginalTable[idx] << ")")
 		return true;
 	}
 
 	bool Restore() {
 		*pVtablePtr = pOriginalTable;
-		LOG("Restored original VMT")
+		SHADOWLOG("Restored original VMT")
 		return true;
 	}
 
 	template <typename T, typename... Arguments>
 	auto CallOriginal(int idx, Arguments... args) -> T {
-		LOG("Calling original function at index: " << idx << " (" << pOriginalTable[idx] << ")")
+		SHADOWLOG("Calling original function at index: " << idx << " (" << pOriginalTable[idx] << ")")
 		auto addr = pOriginalTable[idx];
 		using FunctionPtr = T(*)(Arguments...);
 		auto ogFunc = reinterpret_cast<FunctionPtr>(addr);

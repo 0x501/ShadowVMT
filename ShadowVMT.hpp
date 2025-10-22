@@ -65,12 +65,11 @@ public:
 		return true;
 	}
 
-	template <typename T, typename... Arguments>
-	auto CallOriginal(int idx, Arguments... args) -> T {
+	template <typename T, typename... Args>
+	T CallOriginal(int idx, Args... args) {
 		LOG("Calling original function at index: " << idx << " (" << pOriginalTable[idx] << ")")
 		auto addr = pOriginalTable[idx];
-		using FunctionPtr = T(*)(Arguments...);
-		auto ogFunc = reinterpret_cast<FunctionPtr>(addr);
+		auto ogFunc = reinterpret_cast<T(*)(Args...)>(addr);
 		return ogFunc(args...);
 	}
 private:
